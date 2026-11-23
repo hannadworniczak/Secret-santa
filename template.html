@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Friendsgiving Secret Santa</title>
+<title>Brothers Christmas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600..800&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -109,7 +109,7 @@ input:focus{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--
   ];
 
   const $ = id => document.getElementById(id);
-  const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+  const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
   const hash = s => { let h = 5381; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
 
   function matchFor(key) {

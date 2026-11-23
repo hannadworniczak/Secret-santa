@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Friendsgiving Secret Santa</title>
+<title>Brothers Christmas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600..800&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -71,11 +71,11 @@ input:focus{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--
 <div class="scene" aria-hidden="true"><div class="sky"></div><div class="moon"></div><div class="hill"></div><div id="snow"></div></div>
 
 <main>
-  <h1 id="title">Friendsgiving Secret Santa</h1>
+  <h1 id="title">Our Secret Santa hoe hoe hoe ;) </h1>
 
   <!-- Step 1: welcome + name -->
   <section id="step-name">
-    <p class="lead">Hello, welcome to our Friendsgiving Secret Santa! Five friends, five gifts, and nobody knows who drew whom.</p>
+    <p class="lead">Sup brothers, welcome to our Christmas Secret Santa! Mam nadzieje ze działa ho ho ho xd.</p>
     <form class="card" id="nameForm" novalidate>
       <label for="name">Please input your name</label>
       <input id="name" name="name" autocomplete="given-name" placeholder="Your first name" required>
@@ -90,7 +90,7 @@ input:focus{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--
     <div id="reveal" class="reveal card" hidden aria-live="polite">
       <p>You are the Secret Santa for</p>
       <p class="who" id="who"></p>
-      <p class="hush">Shh! Keep it to yourself and start thinking about the perfect gift.</p>
+      <p class="hush">Shh! Keep it to yourself and start thinking about the perfect gift hihi spokojnie ja tez nie widze kto kogo wybrał bo ukryłam to w algorytm :( </p>
     </div>
     <div class="gifts" id="gifts"></div>
     <button class="link" id="switch" type="button">Not you? Switch person</button>
@@ -109,7 +109,7 @@ input:focus{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--
   ];
 
   const $ = id => document.getElementById(id);
-  const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+  const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
   const hash = s => { let h = 5381; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
 
   function matchFor(key) {
@@ -168,7 +168,7 @@ input:focus{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--
     let key = norm($("name").value);
     key = NICKNAMES[key] || key;
     if (!key) { $("err").textContent = "Type your name first."; return; }
-    if (!matchFor(key)) { $("err").textContent = "Hmm, that name isn't on our list. Try Hanna, Maja, Julia, Nikola or Wiktoria."; return; }
+    if (!matchFor(key)) { $("err").textContent = "Hmm, that name isn't on our list. Are you sure you are one of the Brothers?Try Hanna, Maja, Julia, Nikola or Wiktoria."; return; }
     $("err").textContent = "";
     me = key;
     showGifts(store.get() === me);
