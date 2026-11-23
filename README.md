@@ -1,4 +1,4 @@
-# Friendsgiving Secret Santa
+# Chrismas Secret Santa
 
 A one-page website for our Secret Santa. Open it, type your name, pick a gift box, and see who you're buying for.
 
