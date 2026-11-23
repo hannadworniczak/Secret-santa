@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Friendsgiving Secret Santa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600..800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* VOICE: sweet, giddy, a little secretive — a party for five friends
+   IDEA: a snowy pink winter scene where a row of wrapped gifts hides each name
+   PICTURE: five wrapped boxes on a snowbank; the one you pick throws its lid off
+   COLOUR and TYPE: candy pink ground, teal ribbons, gold accents; Fraunces italic + Nunito
+   LAYOUT: one centred column — title, then the card or the gifts, snow all around */
+:root{color-scheme:light dark;
+  --bg:light-dark(#FADCE7,#2B1222);--sky:light-dark(#F8CFDE,#36182B);
+  --ink:light-dark(#4A1F35,#FBE3EC);--soft:light-dark(#8C3D62,#E9A3BE);
+  --card:light-dark(#FFFFFF,#45203A);--accent:light-dark(#C2306A,#F49AB9);
+  --teal:#1FA99F;--snow:light-dark(#FFFFFF,#F3E4EA);--moon:light-dark(#FFF4F8,#F7E7EE)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip;min-height:100vh}
+.scene{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.sky{position:absolute;inset:0 0 45% 0;background:var(--sky)}
+.moon{position:absolute;right:9%;top:7%;width:clamp(80px,12vw,150px);aspect-ratio:1;border-radius:50%;background:var(--moon);box-shadow:0 0 0 22px rgba(255,255,255,.3),0 0 0 54px rgba(255,255,255,.14)}
+.hill{position:absolute;left:-10%;right:-10%;bottom:-38vh;height:60vh;border-radius:50%;background:var(--snow);opacity:.9}
+.flake{position:absolute;top:-20px;border-radius:50%;background:var(--snow);animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) translateX(30px)}}
+main{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:clamp(36px,7vh,80px) 16px 64px;text-align:center}
+.star{color:#F2D27A;font-size:0}
+h1{font:italic 800 clamp(40px,7vw,64px)/1.05 Fraunces,Georgia,serif;margin:0 0 12px;color:var(--accent);text-wrap:balance}
+.lead{margin:0 auto 28px;max-width:30em;color:var(--soft);font-weight:700;text-wrap:balance}
+.card{background:var(--card);border-radius:24px;padding:clamp(24px,4vw,40px);max-width:460px;margin:0 auto;box-shadow:0 20px 50px rgba(194,48,106,.18)}
+label{display:block;font-weight:800;margin-bottom:10px;font-size:18px}
+input{width:100%;font:700 18px Nunito,sans-serif;padding:14px 18px;border-radius:14px;border:2px solid #F49AB9;background:light-dark(#FFF7FA,#2B1222);color:var(--ink);text-align:center}
+input:focus{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--teal)}
+.btn{margin-top:16px;min-height:52px;width:100%;border:0;border-radius:14px;background:var(--teal);color:#fff;font:800 18px Nunito,sans-serif;cursor:pointer;box-shadow:0 5px 0 #157A73}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #157A73}
+.btn:focus-visible,.link:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.err{min-height:1.6em;margin:12px 0 0;color:var(--accent);font-weight:700;font-size:15px}
+.link{background:none;border:0;color:var(--soft);font:700 15px Nunito,sans-serif;text-decoration:underline;cursor:pointer;padding:12px;min-height:44px}
+[hidden]{display:none!important}
+/* gifts */
+.gifts{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:20px 34px;margin:8px auto 0;--s:1}
+.gift{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;width:calc(var(--s)*170px);height:calc(var(--s)*250px);padding:0;background:none;border:0;cursor:pointer;transition:opacity .4s,transform .3s}
+.gift:hover .lid{transform:translateY(-8px)}
+.gift:focus-visible{outline:3px solid var(--teal);outline-offset:6px;border-radius:16px}
+.lid{display:flex;flex-direction:column;align-items:center;transition:transform .55s cubic-bezier(.3,1.6,.5,1)}
+.bow{position:relative;width:calc(var(--s)*76px);height:calc(var(--s)*36px)}
+.bow i{position:absolute;top:4px;width:44%;height:72%;border:calc(var(--s)*8px) solid var(--r);box-sizing:border-box}
+.bow i:first-child{left:4%;border-radius:50% 40% 40% 50%;transform:rotate(-18deg)}
+.bow i:nth-child(2){right:4%;border-radius:40% 50% 50% 40%;transform:rotate(18deg)}
+.bow b{position:absolute;left:50%;top:52%;width:21%;aspect-ratio:1;margin-left:-10.5%;background:var(--r);border-radius:5px}
+.cap{position:relative;width:calc(var(--s)*181px);height:calc(var(--s)*34px);background:var(--l);border-radius:8px;box-shadow:0 4px 0 rgba(31,90,95,.14)}
+.box{position:relative;width:calc(var(--s)*165px);height:calc(var(--s)*140px);background:var(--c);border-radius:0 0 10px 10px;box-shadow:0 16px 28px rgba(194,48,106,.18)}
+.cap::after,.box::after{content:"";position:absolute;left:50%;top:0;width:calc(var(--s)*20px);height:100%;margin-left:calc(var(--s)*-10px);background:var(--r)}
+.box::before{content:"";position:absolute;left:0;top:42%;width:100%;height:calc(var(--s)*18px);background:var(--r);opacity:.9}
+.gift.open .lid{transform:translate(34px,-70px) rotate(22deg)}
+.gifts.picked .gift:not(.open){opacity:.25;transform:scale(.92);pointer-events:none}
+/* reveal */
+.reveal{margin:0 auto 26px;max-width:460px;animation:pop .6s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.7) translateY(20px)}}
+.reveal p{margin:0;font-weight:700;color:var(--soft)}
+.who{font:italic 800 clamp(48px,10vw,76px)/1.05 Fraunces,Georgia,serif;color:var(--teal);margin:6px 0 10px!important;overflow-wrap:anywhere}
+.hush{font-size:15px}
+@media(max-width:600px){.gifts{--s:.6;gap:14px 18px}.gift.open .lid{transform:translate(20px,-44px) rotate(22deg)}}
+@media(prefers-reduced-motion:reduce){.flake{animation:none}.lid,.gift,.reveal{transition:none;animation:none}}
+</style>
+</head>
+<body>
+<div class="scene" aria-hidden="true"><div class="sky"></div><div class="moon"></div><div class="hill"></div><div id="snow"></div></div>
+
+<main>
+  <h1 id="title">Friendsgiving Secret Santa</h1>
+
+  <!-- Step 1: welcome + name -->
+  <section id="step-name">
+    <p class="lead">Hello, welcome to our Friendsgiving Secret Santa! Five friends, five gifts, and nobody knows who drew whom.</p>
+    <form class="card" id="nameForm" novalidate>
+      <label for="name">Please input your name</label>
+      <input id="name" name="name" autocomplete="given-name" placeholder="Your first name" required>
+      <button class="btn" type="submit">Let me pick a gift</button>
+      <p class="err" id="err" role="alert"></p>
+    </form>
+  </section>
+
+  <!-- Step 2: pick a box -->
+  <section id="step-gifts" hidden>
+    <p class="lead" id="hello"></p>
+    <div id="reveal" class="reveal card" hidden aria-live="polite">
+      <p>You are the Secret Santa for</p>
+      <p class="who" id="who"></p>
+      <p class="hush">Shh! Keep it to yourself and start thinking about the perfect gift.</p>
+    </div>
+    <div class="gifts" id="gifts"></div>
+    <button class="link" id="switch" type="button">Not you? Switch person</button>
+  </section>
+</main>
+
+<script>
+{
+  // The sealed draw: each person's match, scrambled so it can't be read from the page.
+  const DRAW = __DRAW__;
+  const PEOPLE = ["Hanna", "Maja", "Wiktoria", "Julia", "Nikola"];
+  const NICKNAMES = { hania: "hanna", wiki: "wiktoria", wika: "wiktoria", julka: "julia", majka: "maja" };
+  const COLORS = [
+    ["#F49AB9", "#EE86AA", "#2FB8AF"], ["#3CC6BE", "#5FD2C9", "#F49AB9"], ["#F2D27A", "#F7DE95", "#E86A98"],
+    ["#E86A98", "#F4A9C4", "#F2D27A"], ["#A8E9E3", "#CDF3EF", "#E86A98"]
+  ];
+
+  const $ = id => document.getElementById(id);
+  const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+  const hash = s => { let h = 5381; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
+
+  function matchFor(key) {
+    const code = DRAW[hash(key)];
+    if (!code) return null;
+    const k = new TextEncoder().encode(key + "|ff2026");
+    const bytes = Uint8Array.from(atob(code), (c, i) => c.charCodeAt(0) ^ k[i % k.length]);
+    return new TextDecoder().decode(bytes);
+  }
+
+  const store = {
+    get() { try { return localStorage.getItem("ffss-me"); } catch (e) { return null; } },
+    set(v) { try { v ? localStorage.setItem("ffss-me", v) : localStorage.removeItem("ffss-me"); } catch (e) {} }
+  };
+
+  let me = null; // normalised name of whoever is using the page
+
+  // Falling snow
+  $("snow").innerHTML = Array.from({ length: 40 }, () => {
+    const size = 3 + Math.random() * 6;
+    return `<span class="flake" style="left:${Math.random() * 100}%;width:${size}px;height:${size}px;opacity:${.4 + Math.random() * .6};animation-duration:${8 + Math.random() * 10}s;animation-delay:-${Math.random() * 18}s"></span>`;
+  }).join("");
+
+  // Five gift boxes
+  $("gifts").innerHTML = COLORS.map(([c, l, r], i) =>
+    `<button type="button" class="gift" data-i="${i}" aria-label="Gift box ${i + 1}" style="--c:${c};--l:${l};--r:${r}">
+       <span class="lid" aria-hidden="true"><span class="bow"><i></i><i></i><b></b></span><span class="cap"></span></span>
+       <span class="box" aria-hidden="true"></span>
+     </button>`).join("");
+
+  const pretty = key => PEOPLE.find(p => norm(p) === key);
+
+  function showGifts(alreadyDrawn) {
+    $("step-name").hidden = true;
+    $("step-gifts").hidden = false;
+    $("gifts").classList.remove("picked");
+    document.querySelectorAll(".gift").forEach(g => g.classList.remove("open"));
+    if (alreadyDrawn) {
+      $("hello").textContent = `Welcome back, ${pretty(me)}! Here's who you drew.`;
+      showMatch();
+      $("gifts").hidden = true;
+    } else {
+      $("hello").textContent = `Hi ${pretty(me)}! Pick any gift box to find out who you're buying for.`;
+      $("reveal").hidden = true;
+      $("gifts").hidden = false;
+    }
+  }
+
+  function showMatch() {
+    $("who").textContent = matchFor(me);
+    $("reveal").hidden = false;
+  }
+
+  $("nameForm").addEventListener("submit", e => {
+    e.preventDefault();
+    let key = norm($("name").value);
+    key = NICKNAMES[key] || key;
+    if (!key) { $("err").textContent = "Type your name first."; return; }
+    if (!matchFor(key)) { $("err").textContent = "Hmm, that name isn't on our list. Try Hanna, Maja, Julia, Nikola or Wiktoria."; return; }
+    $("err").textContent = "";
+    me = key;
+    showGifts(store.get() === me);
+  });
+
+  $("gifts").addEventListener("click", e => {
+    const gift = e.target.closest(".gift");
+    if (!gift || $("gifts").classList.contains("picked")) return;
+    gift.classList.add("open");
+    $("gifts").classList.add("picked");
+    store.set(me);
+    setTimeout(() => { showMatch(); $("hello").textContent = `${pretty(me)}, your gift is open!`; }, 450);
+  });
+
+  $("switch").addEventListener("click", () => {
+    store.set(null); me = null;
+    $("name").value = "";
+    $("step-gifts").hidden = true;
+    $("step-name").hidden = false;
+    $("name").focus();
+  });
+
+  // Returning on the same phone? Go straight to their result.
+  const saved = store.get();
+  if (saved && matchFor(saved)) { me = saved; showGifts(true); }
+}
+</script>
+</body>
+</html>
